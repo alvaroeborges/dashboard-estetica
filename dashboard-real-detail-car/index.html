@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#08080a">
+    <meta name="description" content="Painel interno de gestão da RDC Real Detail Car: serviços, faturamento e reativação de clientes.">
+    <title>RDC · Painel de Gestão</title>
+
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2308080a' stroke='%23e8540c' stroke-width='4'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='Arial Black,Arial' font-weight='900' font-style='italic' font-size='22' fill='%23ff9142'%3ERDC%3C/text%3E%3C/svg%3E">
+
+    <!-- Mesmas fontes do site institucional: Anybody (títulos), Instrument Serif (acento),
+         Geist (leitura) e Geist Mono (rótulos técnicos). Há fallbacks locais caso estejam offline. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anybody:ital,wdth,wght@0,100..150,600..900;1,100..150,600..900&family=Instrument+Serif:ital@0;1&family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- ===== BIBLIOTECA DE ÍCONES (SVG sprite, traço fino) ===== -->
+    <svg class="sprite" aria-hidden="true" focusable="false">
+        <defs>
+            <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></symbol>
+            <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+            <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></symbol>
+            <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+            <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15v2M11 11v6M15 7v10M19 12v5"/></symbol>
+            <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+            <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+            <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+            <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+            <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+            <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+            <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+            <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 17H3v-5l2-5a2 2 0 0 1 1.9-1.4h10.2A2 2 0 0 1 19 7l2 5v5h-2"/><path d="M3 12h18"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M9.5 17h5"/></symbol>
+            <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+            <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></symbol>
+            <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M5 3h14"/></symbol>
+            <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+            <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+            <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M20 7V5a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V6"/><path d="M17 14h.01"/></symbol>
+            <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M5 3v18l2.5-1.5L10 21l2-1.5 2 1.5 2.5-1.5L19 21V3l-2.5 1.5L14 3l-2 1.5L10 3 7.5 4.5z"/><path d="M9 9h6M9 13h6"/></symbol>
+            <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+            <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+            <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+            <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M16 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></symbol>
+            <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+            <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.8 7L3 21l2-6A8 8 0 1 1 21 12z"/></symbol>
+            <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></symbol>
+            <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></symbol>
+        </defs>
+    </svg>
+
+    <div class="app">
+        <!-- ===== MENU LATERAL ===== -->
+        <aside class="sidebar" id="sidebar" aria-label="Menu principal">
+            <div class="sidebar__top">
+                <a href="#visao-geral" class="brand" aria-label="RDC Real Detail Car — Visão geral">
+                    <span class="brand__mark" aria-hidden="true"><i>RDC</i></span>
+                    <span class="brand__text">
+                        <strong><i><span class="text-red">RDC</span></i></strong>
+                        <small>REAL DETAIL CAR</small>
+                    </span>
+                </a>
+                <button class="icon-btn sidebar__close" id="sidebar-close" type="button" aria-label="Fechar menu">
+                    <svg class="icon"><use href="#i-close"/></svg>
+                </button>
+            </div>
+
+            <p class="sidebar__label">Painel de gestão</p>
+
+            <nav class="nav" id="nav">
+                <a href="#visao-geral" class="nav__link" data-route="visao-geral">
+                    <svg class="icon"><use href="#i-grid"/></svg>
+                    <span>Visão geral</span>
+                    <span class="nav__index">01</span>
+                </a>
+                <a href="#registrar" class="nav__link" data-route="registrar">
+                    <svg class="icon"><use href="#i-plus"/></svg>
+                    <span>Registrar serviço</span>
+                    <span class="nav__index">02</span>
+                </a>
+                <a href="#historico" class="nav__link" data-route="historico">
+                    <svg class="icon"><use href="#i-history"/></svg>
+                    <span>Histórico de serviços</span>
+                    <span class="nav__index">03</span>
+                </a>
+                <a href="#reativar" class="nav__link" data-route="reativar">
+                    <svg class="icon"><use href="#i-bell"/></svg>
+                    <span>Clientes para reativar</span>
+                    <span class="nav__badge" id="nav-alert-badge" hidden>0</span>
+                    <span class="nav__index">04</span>
+                </a>
+                <a href="#relatorios" class="nav__link" data-route="relatorios">
+                    <svg class="icon"><use href="#i-chart"/></svg>
+                    <span>Relatórios</span>
+                    <span class="nav__index">05</span>
+                </a>
+                <a href="#configuracoes" class="nav__link" data-route="configuracoes">
+                    <svg class="icon"><use href="#i-settings"/></svg>
+                    <span>Configurações e backup</span>
+                    <span class="nav__index">06</span>
+                </a>
+            </nav>
+
+            <div class="sidebar__foot">
+                <svg class="icon"><use href="#i-shield"/></svg>
+                <p>Dados salvos somente neste navegador. Faça backups regulares em <a href="#configuracoes">Configurações</a>.</p>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
+
+        <div class="main">
+            <!-- ===== CABEÇALHO ===== -->
+            <header class="topbar">
+                <button class="icon-btn topbar__menu" id="menu-toggle" type="button" aria-label="Abrir menu"
+                    aria-controls="sidebar" aria-expanded="false">
+                    <svg class="icon"><use href="#i-menu"/></svg>
+                </button>
+
+                <div class="topbar__title">
+                    <p class="eyebrow"><span id="page-index">01</span> / <span class="eyebrow__brand">RDC Real Detail Car</span></p>
+                    <h1 id="page-title" tabindex="-1">Visão geral</h1>
+                </div>
+
+                <div class="topbar__actions">
+                    <p class="topbar__date" id="today-label"></p>
+                    <a href="#reativar" class="icon-btn alert-btn" id="alert-button" aria-label="Clientes para reativar">
+                        <svg class="icon"><use href="#i-bell"/></svg>
+                        <span class="alert-btn__badge" id="alert-badge" hidden>0</span>
+                    </a>
+                    <button class="btn btn--primary btn--small" id="quick-add" type="button">
+                        <svg class="icon"><use href="#i-plus"/></svg>
+                        <span>Novo serviço</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="content" id="content">
+
+                <!-- ===================================================
+                     01 · VISÃO GERAL
+                     =================================================== -->
+                <section class="view" id="view-visao-geral" data-view="visao-geral" hidden>
+                    <div class="kpi-grid kpi-grid--revenue">
+                        <article class="kpi kpi--feature">
+                            <div class="kpi__head">
+                                <span class="kpi__label">Faturamento de hoje</span>
+                                <svg class="icon"><use href="#i-wallet"/></svg>
+                            </div>
+                            <strong class="kpi__value" id="kpi-day">—</strong>
+                            <p class="kpi__meta" id="kpi-day-meta"></p>
+                        </article>
+                        <article class="kpi kpi--feature">
+                            <div class="kpi__head">
+                                <span class="kpi__label">Faturamento da semana</span>
+                                <svg class="icon"><use href="#i-calendar"/></svg>
+                            </div>
+                            <strong class="kpi__value" id="kpi-week">—</strong>
+                            <p class="kpi__meta" id="kpi-week-meta"></p>
+                        </article>
+                        <article class="kpi kpi--feature">
+                            <div class="kpi__head">
+                                <span class="kpi__label">Faturamento do mês</span>
+                                <svg class="icon"><use href="#i-chart"/></svg>
+                            </div>
+                            <strong class="kpi__value" id="kpi-month">—</strong>
+                            <p class="kpi__meta" id="kpi-month-meta"></p>
+                        </article>
+                    </div>
+
+                    <div class="section-bar">
+                        <h2 class="section-bar__title">Desempenho <i>do período</i></h2>
+                        <div class="segmented" id="overview-period" role="group" aria-label="Período dos indicadores">
+                            <button type="button" data-period="day">Dia</button>
+                            <button type="button" data-period="week">Semana</button>
+                            <button type="button" data-period="month">Mês</button>
+                        </div>
+                    </div>
+
+                    <div class="kpi-grid">
+                        <article class="kpi">
+                            <div class="kpi__head">
+                                <span class="kpi__label">Veículos atendidos</span>
+                                <svg class="icon"><use href="#i-car"/></svg>
+                            </div>
+                            <strong class="kpi__value" id="kpi-vehicles">—</strong>
+                            <p class="kpi__meta" id="kpi-vehicles-meta"></p>
+                        </article>
+                        <article class="kpi">
+                            <div class="kpi__head">
+                                <span class="kpi__label">Ticket médio</span>
+                                <svg class="icon"><use href="#i-receipt"/></svg>
+                            </div>
+                            <strong class="kpi__value" id="kpi-ticket">—</strong>
+                            <p class="kpi__meta" id="kpi-ticket-meta"></p>
+                        </article>
+                        <a href="#reativar" class="kpi kpi--link" id="kpi-pending-card">
+                            <div class="kpi__head">
+                                <span class="kpi__label">Retornos pendentes</span>
+                                <svg class="icon"><use href="#i-bell"/></svg>
+                            </div>
+                            <strong class="kpi__value" id="kpi-pending">—</strong>
+                            <p class="kpi__meta" id="kpi-pending-meta"></p>
+                        </a>
+                    </div>
+
+                    <article class="panel">
+                        <header class="panel__head">
+                            <div>
+                                <h2 class="panel__title">Faturamento mensal</h2>
+                                <p class="panel__sub">Últimos 6 meses, calculado a partir dos serviços registrados.</p>
+                            </div>
+                        </header>
+                        <div id="revenue-chart"></div>
+                    </article>
+
+                    <div class="grid-2">
+                        <article class="panel">
+                            <header class="panel__head">
+                                <div>
+                                    <h2 class="panel__title">Atendimentos recentes</h2>
+                                    <p class="panel__sub">Os cinco últimos registros.</p>
+                                </div>
+                                <a href="#historico" class="link-arrow">Ver histórico <svg class="icon"><use href="#i-arrow"/></svg></a>
+                            </header>
+                            <div id="recent-list"></div>
+                        </article>
+                        <article class="panel">
+                            <header class="panel__head">
+                                <div>
+                                    <h2 class="panel__title">Próximos retornos</h2>
+                                    <p class="panel__sub">Pendentes primeiro, depois os prazos mais próximos.</p>
+                                </div>
+                                <a href="#reativar" class="link-arrow">Ver todos <svg class="icon"><use href="#i-arrow"/></svg></a>
+                            </header>
+                            <div id="upcoming-list"></div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- ===================================================
+                     02 · REGISTRAR SERVIÇO
+                     =================================================== -->
+                <section class="view" id="view-registrar" data-view="registrar" hidden>
+                    <div class="form-layout">
+                        <form class="panel form" id="service-form" novalidate autocomplete="off">
+                            <header class="panel__head">
+                                <div>
+                                    <h2 class="panel__title" id="form-title">Novo atendimento</h2>
+                                    <p class="panel__sub" id="form-sub">Preencha os dados do serviço realizado. Campos com * são obrigatórios.</p>
+                                </div>
+                            </header>
+
+                            <div class="edit-banner" id="edit-banner" hidden>
+                                <svg class="icon"><use href="#i-edit"/></svg>
+                                <p id="edit-banner-text">Editando registro.</p>
+                            </div>
+
+                            <fieldset class="form__group">
+                                <legend>Cliente</legend>
+                                <div class="form__row">
+                                    <div class="field">
+                                        <label for="f-client">Nome completo *</label>
+                                        <input type="text" id="f-client" name="clientName" maxlength="120"
+                                            list="client-suggestions" placeholder="Nome e sobrenome" required>
+                                        <datalist id="client-suggestions"></datalist>
+                                        <p class="field__error" data-error-for="clientName"></p>
+                                    </div>
+                                    <div class="field">
+                                        <label for="f-phone">Telefone com WhatsApp *</label>
+                                        <input type="tel" id="f-phone" name="phone" inputmode="numeric"
+                                            maxlength="16" placeholder="(00) 00000-0000" required>
+                                        <p class="field__error" data-error-for="phone"></p>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="form__group">
+                                <legend>Veículo e serviço</legend>
+                                <div class="form__row">
+                                    <div class="field">
+                                        <label for="f-vehicle">Modelo do veículo *</label>
+                                        <input type="text" id="f-vehicle" name="vehicle" maxlength="80"
+                                            placeholder="Marca e modelo" required>
+                                        <p class="field__error" data-error-for="vehicle"></p>
+                                    </div>
+                                    <div class="field">
+                                        <label for="f-date">Data do serviço *</label>
+                                        <input type="date" id="f-date" name="date" required>
+                                        <p class="field__hint" id="reactivation-preview"></p>
+                                        <p class="field__error" data-error-for="date"></p>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="f-description">Descrição do serviço realizado *</label>
+                                    <textarea id="f-description" name="description" rows="3" maxlength="600"
+                                        placeholder="Ex.: lavagem detalhada, polimento técnico, higienização interna…" required></textarea>
+                                    <p class="field__error" data-error-for="description"></p>
+                                </div>
+                                <div class="form__row">
+                                    <div class="field">
+                                        <label for="f-value">Valor cobrado *</label>
+                                        <div class="input-prefix">
+                                            <span aria-hidden="true">R$</span>
+                                            <input type="text" id="f-value" name="value" inputmode="decimal"
+                                                maxlength="16" placeholder="0,00" required>
+                                        </div>
+                                        <p class="field__error" data-error-for="value"></p>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <div class="form__actions">
+                                <button type="button" class="btn btn--ghost" id="form-cancel" hidden>Cancelar edição</button>
+                                <button type="button" class="btn btn--ghost" id="form-clear">Limpar</button>
+                                <button type="submit" class="btn btn--primary" id="form-submit">
+                                    <svg class="icon"><use href="#i-check"/></svg>
+                                    <span>Salvar serviço</span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <aside class="panel form-aside">
+                            <h2 class="panel__title">Como funciona <i>o retorno</i></h2>
+                            <ol class="steps">
+                                <li><strong>Registre o serviço</strong> com a data em que foi realizado — inclusive datas anteriores.</li>
+                                <li><strong>O prazo é calculado</strong> automaticamente: 15 dias corridos após a data do serviço.</li>
+                                <li><strong>No 15º dia</strong> o cliente aparece em <a href="#reativar">Clientes para reativar</a> com a mensagem pronta: abra no WhatsApp e é só apertar enviar.</li>
+                                <li><strong>Marque como contatado</strong> e o alerta é encerrado.</li>
+                            </ol>
+                            <p class="note">
+                                <svg class="icon"><use href="#i-clock"/></svg>
+                                Os alertas são atualizados sempre que o painel é aberto. Não há notificações com o navegador fechado.
+                            </p>
+                        </aside>
+                    </div>
+                </section>
+
+                <!-- ===================================================
+                     03 · HISTÓRICO
+                     =================================================== -->
+                <section class="view" id="view-historico" data-view="historico" hidden>
+                    <div class="panel filters">
+                        <div class="filters__row">
+                            <div class="field field--search">
+                                <label for="history-search" class="sr-only">Buscar</label>
+                                <svg class="icon"><use href="#i-search"/></svg>
+                                <input type="search" id="history-search" placeholder="Buscar cliente, telefone ou veículo…">
+                            </div>
+                            <div class="field">
+                                <label for="history-scope" class="sr-only">Buscar em</label>
+                                <select id="history-scope">
+                                    <option value="all">Todos os campos</option>
+                                    <option value="name">Nome do cliente</option>
+                                    <option value="phone">Telefone</option>
+                                    <option value="vehicle">Modelo do veículo</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label for="history-sort" class="sr-only">Ordenar por</label>
+                                <select id="history-sort">
+                                    <option value="date-desc">Data · mais recentes</option>
+                                    <option value="date-asc">Data · mais antigos</option>
+                                    <option value="value-desc">Valor · maior primeiro</option>
+                                    <option value="value-asc">Valor · menor primeiro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters__row">
+                            <div class="segmented" id="history-period" role="group" aria-label="Período">
+                                <button type="button" data-period="all">Tudo</button>
+                                <button type="button" data-period="day">Hoje</button>
+                                <button type="button" data-period="week">Semana</button>
+                                <button type="button" data-period="month">Mês</button>
+                            </div>
+                            <div class="date-range">
+                                <div class="field">
+                                    <label for="history-from">De</label>
+                                    <input type="date" id="history-from">
+                                </div>
+                                <div class="field">
+                                    <label for="history-to">Até</label>
+                                    <input type="date" id="history-to">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn--ghost btn--small" id="history-reset">Limpar filtros</button>
+                        </div>
+                    </div>
+
+                    <div class="results-bar">
+                        <p id="history-summary" aria-live="polite"></p>
+                        <button type="button" class="btn btn--ghost btn--small" id="history-export">
+                            <svg class="icon"><use href="#i-download"/></svg>
+                            <span>Exportar CSV</span>
+                        </button>
+                    </div>
+
+                    <div id="history-list"></div>
+                    <div class="load-more">
+                        <button type="button" class="btn btn--ghost btn--small" id="history-more" hidden>Mostrar mais</button>
+                    </div>
+                </section>
+
+                <!-- ===================================================
+                     04 · CLIENTES PARA REATIVAR
+                     =================================================== -->
+                <section class="view" id="view-reativar" data-view="reativar" hidden>
+                    <div class="section-bar">
+                        <div class="tabs" id="reactivation-tabs" role="tablist" aria-label="Situação do alerta">
+                            <button type="button" role="tab" data-tab="pending">Retorno pendente <span class="tabs__count" data-count="pending">0</span></button>
+                            <button type="button" role="tab" data-tab="waiting">Aguardando prazo <span class="tabs__count" data-count="waiting">0</span></button>
+                            <button type="button" role="tab" data-tab="done">Contato realizado <span class="tabs__count" data-count="done">0</span></button>
+                        </div>
+                    </div>
+                    <p class="note note--inline">
+                        <svg class="icon"><use href="#i-clock"/></svg>
+                        Cada serviço gera um alerta 15 dias após o atendimento. Os alertas são recalculados ao abrir o painel — não há notificações com o navegador fechado.
+                    </p>
+                    <div id="reactivation-list" role="tabpanel"></div>
+                </section>
+
+                <!-- ===================================================
+                     05 · RELATÓRIOS
+                     =================================================== -->
+                <section class="view" id="view-relatorios" data-view="relatorios" hidden>
+                    <div class="panel filters">
+                        <div class="filters__row">
+                            <div class="field">
+                                <label for="report-period">Período</label>
+                                <select id="report-period">
+                                    <option value="current-month">Mês atual</option>
+                                    <option value="previous-month">Mês anterior</option>
+                                    <option value="month">Escolher mês</option>
+                                    <option value="year">Ano atual</option>
+                                    <option value="custom">Intervalo personalizado</option>
+                                    <option value="all">Todo o período</option>
+                                </select>
+                            </div>
+                            <div class="field" id="report-month-field" hidden>
+                                <label for="report-month">Mês</label>
+                                <input type="month" id="report-month">
+                            </div>
+                            <div class="date-range" id="report-range-fields" hidden>
+                                <div class="field">
+                                    <label for="report-from">De</label>
+                                    <input type="date" id="report-from">
+                                </div>
+                                <div class="field">
+                                    <label for="report-to">Até</label>
+                                    <input type="date" id="report-to">
+                                </div>
+                            </div>
+                            <div class="filters__end">
+                                <button type="button" class="btn btn--ghost btn--small" id="report-export-summary">
+                                    <svg class="icon"><use href="#i-download"/></svg>
+                                    <span>Resumo CSV</span>
+                                </button>
+                                <button type="button" class="btn btn--primary btn--small" id="report-export-detail">
+                                    <svg class="icon"><use href="#i-download"/></svg>
+                                    <span>Relatório detalhado CSV</span>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="filters__caption" id="report-caption"></p>
+                    </div>
+
+                    <div class="kpi-grid kpi-grid--4" id="report-kpis"></div>
+
+                    <div class="grid-2">
+                        <article class="panel">
+                            <header class="panel__head">
+                                <div>
+                                    <h2 class="panel__title" id="report-breakdown-title">Resumo por dia</h2>
+                                    <p class="panel__sub">Apenas períodos com atendimentos.</p>
+                                </div>
+                            </header>
+                            <div id="report-breakdown"></div>
+                        </article>
+                        <article class="panel">
+                            <header class="panel__head">
+                                <div>
+                                    <h2 class="panel__title">Principais clientes</h2>
+                                    <p class="panel__sub">Por faturamento no período.</p>
+                                </div>
+                            </header>
+                            <div id="report-clients"></div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- ===================================================
+                     06 · CONFIGURAÇÕES E BACKUP
+                     =================================================== -->
+                <section class="view" id="view-configuracoes" data-view="configuracoes" hidden>
+                    <div class="grid-2">
+                        <article class="panel">
+                            <header class="panel__head">
+                                <div>
+                                    <h2 class="panel__title">Backup <i>dos dados</i></h2>
+                                    <p class="panel__sub">Os dados ficam apenas neste navegador. Exporte um arquivo JSON com frequência e guarde em local seguro.</p>
+                                </div>
+                            </header>
+                            <dl class="stats" id="data-stats"></dl>
+                            <div class="panel__actions">
+                                <button type="button" class="btn btn--primary btn--small" id="backup-export">
+                                    <svg class="icon"><use href="#i-download"/></svg>
+                                    <span>Exportar backup (JSON)</span>
+                                </button>
+                                <label class="btn btn--ghost btn--small" for="backup-import">
+                                    <svg class="icon"><use href="#i-upload"/></svg>
+                                    <span>Importar backup</span>
+                                </label>
+                                <input type="file" id="backup-import" accept=".json,application/json" class="sr-only">
+                            </div>
+                        </article>
+
+                        <article class="panel">
+                            <header class="panel__head">
+                                <div>
+                                    <h2 class="panel__title">Mensagem <i>de reativação</i></h2>
+                                    <p class="panel__sub">Texto usado nos botões “Abrir no WhatsApp” e “Copiar mensagem”. Use as variáveis abaixo para inserir os dados do cadastro.</p>
+                                </div>
+                            </header>
+                            <div class="field" id="whatsapp-mode-field">
+                                <label for="whatsapp-mode">Abrir conversa no</label>
+                                <select id="whatsapp-mode">
+                                    <option value="web">WhatsApp Web — reutiliza sempre a mesma aba</option>
+                                    <option value="app">Aplicativo do WhatsApp instalado no computador</option>
+                                </select>
+                                <p class="field__hint">No WhatsApp Web, o primeiro clique abre uma aba e os próximos usam essa mesma aba. Abas abertas manualmente não podem ser controladas pelo navegador.</p>
+                            </div>
+                            <div class="field">
+                                <label for="message-template">Modelo da mensagem</label>
+                                <textarea id="message-template" rows="6" maxlength="1000"></textarea>
+                            </div>
+                            <p class="tokens">
+                                <code>{nome}</code> primeiro nome ·
+                                <code>{nome_completo}</code> ·
+                                <code>{veiculo}</code> ·
+                                <code>{servico}</code> ·
+                                <code>{data}</code> data do serviço
+                            </p>
+                            <div class="message-preview">
+                                <span class="kpi__label">Pré-visualização</span>
+                                <p id="message-preview"></p>
+                            </div>
+                            <div class="panel__actions">
+                                <button type="button" class="btn btn--ghost btn--small" id="template-reset">Restaurar padrão</button>
+                                <button type="button" class="btn btn--primary btn--small" id="template-save">
+                                    <svg class="icon"><use href="#i-check"/></svg>
+                                    <span>Salvar mensagem</span>
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+
+                    <article class="panel panel--danger">
+                        <header class="panel__head">
+                            <div>
+                                <h2 class="panel__title">Apagar todos os dados</h2>
+                                <p class="panel__sub">Remove todos os serviços e alertas deste navegador. Exporte um backup antes — a ação não pode ser desfeita.</p>
+                            </div>
+                            <button type="button" class="btn btn--danger btn--small" id="data-clear">
+                                <svg class="icon"><use href="#i-trash"/></svg>
+                                <span>Apagar dados</span>
+                            </button>
+                        </header>
+                    </article>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- ===== JANELA MODAL (detalhes, confirmações, importação) ===== -->
+    <dialog class="modal" id="modal" aria-labelledby="modal-title">
+        <div class="modal__inner">
+            <header class="modal__head">
+                <div>
+                    <p class="eyebrow" id="modal-eyebrow"></p>
+                    <h2 class="modal__title" id="modal-title"></h2>
+                </div>
+                <button type="button" class="icon-btn" data-modal-value="" aria-label="Fechar">
+                    <svg class="icon"><use href="#i-close"/></svg>
+                </button>
+            </header>
+            <div class="modal__body" id="modal-body"></div>
+            <footer class="modal__actions" id="modal-actions"></footer>
+        </div>
+    </dialog>
+
+    <!-- ===== AVISOS (toasts) ===== -->
+    <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+    <noscript>
+        <p class="noscript">Este painel precisa do JavaScript ativado para funcionar.</p>
+    </noscript>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
