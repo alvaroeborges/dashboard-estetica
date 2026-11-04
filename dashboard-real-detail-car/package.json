@@ -1,0 +1,54 @@
+{
+  "name": "rdc-painel",
+  "productName": "RDC Painel",
+  "version": "1.0.0",
+  "description": "Painel de gestão da RDC Real Detail Car",
+  "author": "RDC Real Detail Car",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --publish never -c.directories.output=C:/Users/alvar/AppData/Local/rdc-painel-build",
+    "release": "electron-builder --win --publish always -c.directories.output=C:/Users/alvar/AppData/Local/rdc-painel-build"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "br.com.rdc.painel",
+    "productName": "RDC Painel",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "index.html",
+      "style.css",
+      "script.js",
+      "img/**"
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "alvaroeborges",
+      "repo": "dashboard-estetica",
+      "releaseType": "release"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "RDC Painel",
+      "artifactName": "RDC-Painel-Instalador-${version}.${ext}"
+    }
+  }
+}

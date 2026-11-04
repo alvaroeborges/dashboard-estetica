@@ -213,22 +213,19 @@ h1 i, h2 i, h3 i {
 .brand:hover { opacity: 0.85; }
 
 .brand__mark {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 25%, #2a2a2e, var(--black) 70%);
-  box-shadow: 0 0 0 2px var(--red), 0 0 0 4px rgba(var(--gold-rgb), 0.35);
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-stretch: 130%;
-  font-size: 0.78rem;
-  color: var(--gold);
-  letter-spacing: -0.02em;
-  transition: box-shadow var(--transition);
+  display: block;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(var(--gold-rgb), 0.35), 0 8px 22px rgba(var(--red-rgb), 0.18);
+  transition: box-shadow var(--transition), transform var(--transition);
 }
-.brand:hover .brand__mark { box-shadow: 0 0 0 2px var(--gold), 0 0 0 4px rgba(var(--red-rgb), 0.35); }
+.brand:hover .brand__mark {
+  transform: scale(1.04);
+  box-shadow: 0 0 0 1px var(--gold), 0 10px 28px rgba(var(--red-rgb), 0.3);
+}
 
 .brand__text { display: flex; flex-direction: column; line-height: 1.1; }
 .brand__text strong {
