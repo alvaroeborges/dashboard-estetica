@@ -1018,7 +1018,10 @@ input[list]::-webkit-calendar-picker-indicator { display: none !important; }
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
   background: linear-gradient(160deg, var(--charcoal), var(--black-soft) 70%);
-  overflow: hidden;
+  /* Com muitos dados a tabela pode passar da largura: rola na horizontal em vez de cortar colunas */
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  container-type: inline-size;
 }
 
 .table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
@@ -1035,7 +1038,7 @@ input[list]::-webkit-calendar-picker-indicator { display: none !important; }
   border-bottom: 1px solid var(--line-strong);
   white-space: nowrap;
 }
-.table td { padding: 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.table td { padding: 14px; border-bottom: 1px solid var(--line); vertical-align: middle; overflow-wrap: break-word; }
 .table tbody tr { transition: background var(--transition); }
 .table tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
 .table tbody tr:last-child td { border-bottom: none; }
@@ -1044,10 +1047,25 @@ input[list]::-webkit-calendar-picker-indicator { display: none !important; }
 .table .num { text-align: right; }
 .table th.num { text-align: right; }
 .table td strong { font-weight: 600; }
-.cell-desc { max-width: 260px; }
+.cell-desc { min-width: 180px; max-width: 260px; }
+/* Cliente e veículo: largura mínima para nomes longos não virarem uma coluna estreita */
+.table--responsive td:nth-child(2),
+.table--responsive td:nth-child(4) { min-width: 150px; }
 .cell-desc span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--grey); }
 .cell-actions { white-space: nowrap; text-align: right; }
 .cell-actions .icon-btn + .icon-btn { margin-left: 4px; }
+
+/* Coluna de ações presa à direita: ver, editar e excluir nunca saem da tela */
+.table--responsive th:last-child,
+.table--responsive td.cell-actions {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background: var(--charcoal);
+  box-shadow: inset 1px 0 0 var(--line), -14px 0 18px -14px rgba(0, 0, 0, 0.7);
+}
+.table--responsive th:last-child { background: #111113; }
+.table--responsive tbody tr:hover td.cell-actions { background: #19191b; }
 .table tfoot td { font-weight: 600; border-top: 1px solid var(--line-strong); background: rgba(0, 0, 0, 0.2); }
 
 /* ==========================================================
@@ -1311,8 +1329,9 @@ code {
   .kpi-grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-/* Tabela vira lista de cartões em telas médias */
-@media (max-width: 1180px) {
+/* Tabela vira lista de cartões quando o espaço dela fica estreito
+   (mede a própria tabela, então já considera o menu lateral aberto) */
+@container (max-width: 960px) {
   .table--responsive thead { display: none; }
   .table--responsive,
   .table--responsive tbody,
@@ -1338,7 +1357,16 @@ code {
     color: var(--grey-dark);
   }
   .table--responsive td.cell-desc { grid-column: 1 / -1; }
-  .table--responsive td.cell-actions { grid-column: 1 / -1; text-align: left !important; padding-top: 6px; border-top: 1px solid var(--line); }
+  .table--responsive td.cell-actions {
+    position: static;
+    grid-column: 1 / -1;
+    text-align: left !important;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    background: none;
+    box-shadow: none;
+  }
+  .table--responsive tbody tr:hover td.cell-actions { background: none; }
   .table--responsive td.cell-actions::before { display: none; }
 }
 
