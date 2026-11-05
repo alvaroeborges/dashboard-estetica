@@ -1,7 +1,7 @@
 {
   "name": "rdc-painel",
   "productName": "RDC Painel",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Painel de gestão da RDC Real Detail Car",
   "author": "RDC Real Detail Car",
   "main": "main.js",
@@ -27,6 +27,7 @@
     },
     "files": [
       "main.js",
+      "preload.js",
       "index.html",
       "style.css",
       "script.js",

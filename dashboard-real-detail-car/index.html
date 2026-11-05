@@ -28,6 +28,8 @@
         <defs>
             <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></symbol>
             <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+            <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+            <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/></symbol>
             <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></symbol>
             <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
             <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15v2M11 11v6M15 7v10M19 12v5"/></symbol>
@@ -560,6 +562,39 @@
                             </div>
                         </article>
                     </div>
+
+                    <article class="panel">
+                        <header class="panel__head">
+                            <div>
+                                <h2 class="panel__title">Tamanho <i>da tela</i></h2>
+                                <p class="panel__sub">Aumente ou diminua o zoom do painel. A escolha fica salva e é aplicada sempre que o app abrir.</p>
+                            </div>
+                        </header>
+                        <div class="zoom">
+                            <div class="zoom__stepper" role="group" aria-label="Zoom">
+                                <button type="button" class="icon-btn" id="zoom-out" aria-label="Diminuir zoom" title="Diminuir (Ctrl −)">
+                                    <svg class="icon"><use href="#i-minus"/></svg>
+                                </button>
+                                <output class="zoom__value" id="zoom-value" aria-live="polite">100%</output>
+                                <button type="button" class="icon-btn" id="zoom-in" aria-label="Aumentar zoom" title="Aumentar (Ctrl +)">
+                                    <svg class="icon"><use href="#i-plus"/></svg>
+                                </button>
+                            </div>
+                            <div class="segmented" id="zoom-presets" role="group" aria-label="Tamanhos prontos">
+                                <button type="button" data-zoom="0.8">80%</button>
+                                <button type="button" data-zoom="0.9">90%</button>
+                                <button type="button" data-zoom="1">100%</button>
+                                <button type="button" data-zoom="1.1">110%</button>
+                                <button type="button" data-zoom="1.25">125%</button>
+                                <button type="button" data-zoom="1.5">150%</button>
+                            </div>
+                            <button type="button" class="btn btn--ghost btn--small" id="zoom-reset">
+                                <svg class="icon"><use href="#i-undo"/></svg>
+                                <span>Restaurar 100%</span>
+                            </button>
+                        </div>
+                        <p class="field__hint zoom__hint" id="zoom-hint"></p>
+                    </article>
 
                     <article class="panel panel--danger">
                         <header class="panel__head">

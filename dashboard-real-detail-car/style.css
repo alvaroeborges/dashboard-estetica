@@ -1196,6 +1196,40 @@ code {
   font-size: 0.78em;
 }
 
+.zoom { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.zoom__stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(0, 0, 0, 0.3);
+}
+.zoom__stepper .icon-btn { border-color: transparent; }
+.zoom__value {
+  min-width: 64px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: 112%;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+.zoom__hint { margin-top: 16px; }
+.icon-btn:disabled, .segmented button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+kbd {
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+}
+
 .message-preview {
   margin-top: 14px;
   padding: 16px;

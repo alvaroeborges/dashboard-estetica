@@ -38,6 +38,7 @@ const CONFIG = Object.freeze({
   HISTORY_PAGE_SIZE: 50,
   MAX_VALUE_CENTS: 100000000, // R$ 1.000.000,00
   BACKUP_REMINDER_DAYS: 7,
+  ZOOM_LEVELS: Object.freeze([0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2]),
 });
 
 const DEFAULT_MESSAGE =
@@ -68,6 +69,7 @@ const DEFAULT_PREFS = Object.freeze({
   report: { period: 'current-month', month: '', from: '', to: '' },
   messageTemplate: DEFAULT_MESSAGE,
   whatsappMode: 'web',
+  zoom: 1,
   lastBackupAt: null,
 });
 
@@ -473,6 +475,7 @@ function loadPrefs() {
   if (typeof saved.messageTemplate === 'string' && saved.messageTemplate.trim()) prefs.messageTemplate = saved.messageTemplate.slice(0, 1000);
   if (isValidIso(saved.lastBackupAt)) prefs.lastBackupAt = saved.lastBackupAt;
   if (['web', 'app'].includes(saved.whatsappMode)) prefs.whatsappMode = saved.whatsappMode;
+  if (CONFIG.ZOOM_LEVELS.includes(saved.zoom)) prefs.zoom = saved.zoom;
 
   const h = saved.history || {};
   prefs.history = {
@@ -1924,6 +1927,52 @@ function renderSettings(syncTemplate = false) {
     <div><dt>Último backup</dt><dd class="${needsBackup ? 'is-warning' : ''}">${last ? DateUtil.formatDateTime(last) : 'Nunca'}${needsBackup ? ' · recomendado' : ''}</dd></div>`;
 }
 
+/* ---------- Zoom (tamanho da tela) ----------
+   No aplicativo o zoom é aplicado pelo Electron (window.rdcApp).
+   No navegador comum vale o zoom do próprio navegador (Ctrl + / Ctrl −). */
+const Zoom = {
+  get available() {
+    return Boolean(window.rdcApp && typeof window.rdcApp.setZoom === 'function');
+  },
+
+  apply() {
+    if (this.available) window.rdcApp.setZoom(state.prefs.zoom);
+    this.render();
+  },
+
+  set(level) {
+    if (!CONFIG.ZOOM_LEVELS.includes(level) || level === state.prefs.zoom) return;
+    state.prefs.zoom = level;
+    savePrefs();
+    this.apply();
+  },
+
+  /** direction: 1 aumenta, -1 diminui. */
+  step(direction) {
+    const levels = CONFIG.ZOOM_LEVELS;
+    const index = levels.indexOf(state.prefs.zoom);
+    const next = levels[Math.min(levels.length - 1, Math.max(0, index + direction))];
+    this.set(next);
+  },
+
+  render() {
+    const level = state.prefs.zoom;
+    const available = this.available;
+    const levels = CONFIG.ZOOM_LEVELS;
+    $('#zoom-value').textContent = `${Math.round(level * 100)}%`;
+    $('#zoom-out').disabled = !available || level === levels[0];
+    $('#zoom-in').disabled = !available || level === levels[levels.length - 1];
+    $('#zoom-reset').disabled = !available || level === 1;
+    $$('#zoom-presets [data-zoom]').forEach((button) => {
+      button.disabled = !available;
+      button.setAttribute('aria-pressed', String(Number(button.dataset.zoom) === level));
+    });
+    $('#zoom-hint').innerHTML = available
+      ? 'Atalhos: <kbd>Ctrl</kbd> <kbd>+</kbd> aumenta, <kbd>Ctrl</kbd> <kbd>−</kbd> diminui, <kbd>Ctrl</kbd> <kbd>0</kbd> volta para 100%. Também funciona com <kbd>Ctrl</kbd> + rodinha do mouse.'
+      : 'No navegador, use o zoom do próprio navegador: <kbd>Ctrl</kbd> <kbd>+</kbd>, <kbd>Ctrl</kbd> <kbd>−</kbd> e <kbd>Ctrl</kbd> <kbd>0</kbd>.';
+  },
+};
+
 function renderMessagePreview() {
   const template = $('#message-template').value || DEFAULT_MESSAGE;
   const latest = [...state.services].sort((a, b) => b.date.localeCompare(a.date))[0];
@@ -2119,6 +2168,29 @@ function bindEvents() {
       ? 'O botão agora abre o aplicativo do WhatsApp instalado no computador.'
       : 'O botão agora abre o WhatsApp Web, sempre na mesma aba.', 'success');
   });
+  $('#zoom-out').addEventListener('click', () => Zoom.step(-1));
+  $('#zoom-in').addEventListener('click', () => Zoom.step(1));
+  $('#zoom-reset').addEventListener('click', () => Zoom.set(1));
+  $('#zoom-presets').addEventListener('click', (e) => {
+    const button = e.target.closest('[data-zoom]');
+    if (button) Zoom.set(Number(button.dataset.zoom));
+  });
+  // No aplicativo não há menu do navegador, então os atalhos de zoom são tratados aqui
+  if (Zoom.available) {
+    document.addEventListener('keydown', (e) => {
+      if (!e.ctrlKey || e.altKey) return;
+      if (['+', '=', 'Add'].includes(e.key) || e.code === 'NumpadAdd') Zoom.step(1);
+      else if (['-', '_', 'Subtract'].includes(e.key) || e.code === 'NumpadSubtract') Zoom.step(-1);
+      else if (e.key === '0' || e.code === 'Numpad0') Zoom.set(1);
+      else return;
+      e.preventDefault();
+    });
+    document.addEventListener('wheel', (e) => {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      Zoom.step(e.deltaY < 0 ? 1 : -1);
+    }, { passive: false });
+  }
   $('#template-save').addEventListener('click', saveTemplate);
   $('#template-reset').addEventListener('click', resetTemplate);
   $('#data-clear').addEventListener('click', clearAllData);
@@ -2137,6 +2209,7 @@ function bindEvents() {
       state.prefs = loadPrefs();
       renderAll();
       renderSettings(true);
+      Zoom.apply();
     }
   });
 }
@@ -2153,6 +2226,7 @@ function init() {
   bindEvents();
   renderAll();
   renderSettings(true);
+  Zoom.apply();
   showRoute(getRouteFromHash());
 
   if (warning) toast(warning, 'error', 9000);
